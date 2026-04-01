@@ -356,7 +356,7 @@
 (define (show-hint! text)
   (clear-hint!)
   (when (and (string? text) (> (string-length text) 0))
-    (let ([trimmed (trim text)])
+    (let ([trimmed (trim-end text)])
       (when (> (string-length trimmed) 0)
         (set! *pending-completion* trimmed)
         (set! *current-hint-id* (add-inlay-hint (get-cursor-pos) trimmed))))))
