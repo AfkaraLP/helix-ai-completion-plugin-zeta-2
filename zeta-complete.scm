@@ -473,9 +473,14 @@
                          (request-completion!)))))))
 
 ;;; On any command (cursor movement, mode switch, etc.), clear the hint.
+;;; When entering normal mode, also bump the generation counter so that
+;;; in-flight requests and pending debounced callbacks are invalidated.
 (register-hook! "post-command"
                 (lambda (cmd)
                   (when *enabled*
                     ;; Don't clear on insert-char since we handle that above
                     (unless (string=? (to-string cmd) "insert_char")
-                      (clear-hint!)))))
+                      (clear-hint!)
+                      ;; Entering normal mode: invalidate in-flight & debounced requests
+                      (when (string=? (to-string cmd) "normal_mode")
+                        (set! *request-gen* (+ *request-gen* 1)))))))
